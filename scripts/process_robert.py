@@ -9,6 +9,7 @@ a text file of formmat line_no, embedding
 from transformers import RobertaTokenizer, RobertaModel
 import torch
 from torch.nn.functional import cosine_similarity
+import csv
 import os
 import re
 import numpy as np
@@ -30,10 +31,14 @@ for filename in os.listdir(directory):
 
         output_filename = f"../data/{title}.txt"
         with open(output_filename, 'w') as outfile:
+            writer = csv.writer(outfile)
             with open(file_path, 'r') as infile:  
                 act, line_no = 0, 0
                 for line in infile:
                     line_no += 1
+
+                    if line.strip() == "":
+                        continue
                     stripped_line = re.sub(r'[^a-zA-Z ]', '', line.strip())
                     line = re.sub(r'[^a-zA-Z \[\]=]', '', line.strip())
                     
