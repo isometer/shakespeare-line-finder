@@ -4,6 +4,8 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from query_result import QueryResult
+
 # set up the guts of the app's processing 
 # (done in this file rather than an auxiliary one to keep everything in working memory.)
 
@@ -46,9 +48,11 @@ def submit():
 
   top_5_sentences = [embeddings_to_sentences[embedding.tobytes()] for embedding in [shakespeare_embeddings[i].reshape(1, 768) for i in top_5_indices]]
   top_5_similarities = [similarities[0][i] for i in top_5_indices]
+
+  query_results = [QueryResult(sentence_info, similarity) for sentence_info, similarity in zip(top_5_sentences, top_5_similarities)]
   
   # Render the result template with the user input
-  return render_template('index.html', results=zip(top_5_sentences, top_5_similarities))
+  return render_template('index.html', results=query_results)
 
 if __name__ == '__main__':
   app.run(debug=True)

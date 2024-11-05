@@ -1,10 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shakespeare Line Finder</title>
+  <style>
+    /* Basic styling for readability */
+    .results-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .result-item {
+      border-bottom: 1px solid #ccc;
+      padding: 8px 0;
+    }
+    .sentence {
+      font-size: 1em;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .supporting-info {
+      font-size: 0.9em;
+      color: #555;
+    }
+    .supporting-info span {
+      margin-right: 10px;
+    }
+    
+    /* Center the .search div horizontally */
+    
+    .search {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .search form {
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    /* Style the main question label */
+    .search label {
+      font-size: 1.2em;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    /* Subtle reference styling */
+    .reference {
+      display: block;
+      font-size: 0.85em;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    /* Emphasize the input field */
+    .search input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+
+    /* Style the submit button */
+    .search button {
+      padding: 8px 16px;
+      font-size: 1em;
+      border: none;
+      background-color: #333;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .search button:hover {
+      background-color: #555;
+    }
+
+</style>
+</head>
+
+<body>
+
 <h1>Shakespeare</h1>
 <p>This is a Shakespeare Line Finder!</p>
 
-<p>Last results: {{ results }}</p>
+<p>Last results:</p>
+<ul class="results-list">
+  {% for query_result in results %}
+    <li class="result-item">
+      <div class="sentence">{{ query_result.sentence }}</div>
+      <div class="supporting-info">
+        <span><strong>Play:</strong> {{ query_result.play }}</span>
+        <span><strong>Act:</strong> {{ query_result.act }}</span>
+        <span><strong>Scene:</strong> {{ query_result.scene }}</span>
+        <span><strong>Sentence Index:</strong> {{ query_result.sentence_index }}</span>
+      </div>
+    </li>
+  {% endfor %}
+</ul>
 
-<form action="/submit" method="post">
-  <label for="user_text">Enter your line (replace this with a shakespeare quote like "what do you want to know/find?"):</label>
-  <input type="text" id="user_text" name="user_text" required>
-  <button type="submit">Submit</button>
-</form>
+<div class="search">
+  <form action="/submit" method="post">
+    <label for="user_text">What is 't you seek?</label>
+    <small class="reference">
+      <em>King Lear</em>, Act 3, Scene 4, Line 111
+    </small>
+    <input type="text" id="user_text" name="user_text" required>
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+
+</body>
+</html>
