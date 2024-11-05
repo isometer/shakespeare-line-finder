@@ -1,11 +1,17 @@
+from flask import Flask, render_template, request
 import pickle
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from query_result import QueryResult
+
+# set up the guts of the app's processing 
+# (done in this file rather than an auxiliary one to keep everything in working memory.)
+
 embeddings_to_sentences = {}
 
-with open('../embeddings_saved.pkl', 'rb') as file:
+with open('embeddings_saved.pkl', 'rb') as file:
   embeddings_to_sentences = pickle.load(file)
 
 # dict keys are made with getEmbedding(sentence.text).tobytes()
@@ -20,23 +26,20 @@ model = SentenceTransformer('sentence-transformers/paraphrase-distilroberta-base
 def getEmbedding(sentence: str):
   return model.encode(sentence).reshape(1, -1)
 
-def display_sentence_info(sentence_info, similarity_score):
-  coordinates = sentence_info[0]
-  sentence = sentence_info[1]
-  play, act, scene, sentence_index = coordinates
-  print(f"{play} -- Act {act}, Scene {scene}, sentence {sentence_index}")
-  print(f'"{sentence}"')
-  print(f"(Match {similarity_score * 100:.1f}%)")
-  print("----------------------")
-  
-while(True):
-  
-  query = input("What sentence would you like to find? (or 'quit' to end)  ")
 
-  if(query == "quit"):
-    break
+app = Flask(__name__)
 
-  query_embedding = getEmbedding(query)
+@app.route('/')
+def home():
+  return render_template('index.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+  # Get the text input from the form
+  user_text = request.form['user_text']
+  
+  # get results
+  query_embedding = getEmbedding(user_text)
 
   similarities = cosine_similarity(query_embedding, shakespeare_embeddings)
 
@@ -46,7 +49,10 @@ while(True):
   top_5_sentences = [embeddings_to_sentences[embedding.tobytes()] for embedding in [shakespeare_embeddings[i].reshape(1, 768) for i in top_5_indices]]
   top_5_similarities = [similarities[0][i] for i in top_5_indices]
 
-  # Print the top 5 matches
-  for idx, (sentence_info, similarity) in enumerate(zip(top_5_sentences, top_5_similarities), 1):
-    display_sentence_info(sentence_info, similarity)
+  query_results = [QueryResult(sentence_info, similarity) for sentence_info, similarity in zip(top_5_sentences, top_5_similarities)]
+  
+  # Render the result template with the user input
+  return render_template('index.html', results=query_results)
 
+if __name__ == '__main__':
+  app.run(debug=True)
