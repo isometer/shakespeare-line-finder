@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 embeddings_to_sentences = {}
 
-with open('embeddings_saved.pkl', 'rb') as file:
+with open('../embeddings_saved.pkl', 'rb') as file:
   embeddings_to_sentences = pickle.load(file)
 
 # dict keys are made with getEmbedding(sentence.text).tobytes()
