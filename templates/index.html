@@ -1,2 +1,10 @@
 <h1>Shakespeare</h1>
 <p>This is a Shakespeare Line Finder!</p>
+
+<p>Last results: {{ results }}</p>
+
+<form action="/submit" method="post">
+  <label for="user_text">Enter your line (replace this with a shakespeare quote like "what do you want to know/find?"):</label>
+  <input type="text" id="user_text" name="user_text" required>
+  <button type="submit">Submit</button>
+</form>
