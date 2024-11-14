@@ -33,16 +33,26 @@ class Act:
 
 
 class Play:
-    def __init__(self, title: str, acts: List[Act]):
+    def __init__(self, title: str, acts: List[Act], size: int):
         self.title = title
         self.acts = acts
+        self.size = size
 
     def __repr__(self):
         return f'Play "{self.title}": {self.acts}'
-    
+
 def create_play(filepath):
 
     play = None
+    play_filesize = os.path.getsize(filepath)
+
+    # strip off character cues e.g. HAMLET To be or not to be ... remove HAMLET
+    def remove_character_cue(line: str):
+        words = line.split()
+        if words and words[0].isupper() and len(words[0]) > 1:
+            return ' '.join(words[1:])
+        else:
+            return line
 
     with open(filepath, 'r') as file:
         title = ""
@@ -85,6 +95,7 @@ def create_play(filepath):
                 case _:
                     # treat this as a content line.
                     if content_begun and open_scene:
+                        line = remove_character_cue(line)
                         lines.append(line)
 
         # last scene, act:
@@ -94,6 +105,6 @@ def create_play(filepath):
         acts.append(Act(len(acts) + 1, scenes))
         scenes = []
 
-        play = Play(title, acts)
+        play = Play(title, acts, play_filesize)
 
     return play
