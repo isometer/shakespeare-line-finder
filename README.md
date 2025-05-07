@@ -11,6 +11,8 @@ To properly capture the large files, make sure you have `git-lfs` installed befo
 
 You can install dependencies with `pip install -r requirements.txt`.
 
+Then run the app with `python3 app.py`, and the app should run on `localhost:5000`, which you can access in your browser.
+
 A quick demo:
 
 ![Shakespeare-demo](https://github.com/user-attachments/assets/7ddbba25-5719-499f-97d0-af1102b97633)
